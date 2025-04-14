@@ -8,6 +8,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 import re
+from datetime import datetime
 import os
 
 
@@ -28,20 +29,8 @@ def get_data():
     data1 = soup.find('span', {'data-testid': 'qsp-price'})
     current_price = float(data1.text)
 
-    data2 = soup.find('div', {'class': 'asofdate yf-i6syij'})
-    if data2:
-        text = data2.text.strip()
-        match = re.search(r'At close:\s*(.+)', text)
-        if match:
-            datetime_str = match.group(1)
-
-            current_year = pd.Timestamp.now().year
-            full_datetime_str = f"{datetime_str} {current_year}"
-            current_date = pd.to_datetime(full_datetime_str, errors='coerce')
-        else:
-            current_date = None
-    else:
-        current_date = None
+    data2 = datetime.now()
+    current_date = pd.to_datetime(data2)
 
     data3 = soup.find('h3', string=re.compile(r'Statistics: '))
     ticker_list = data3.text.split(sep=': ')
